@@ -1,4 +1,7 @@
 # NYC_Taxi_Data_Analysis
+
+## Sequence-- Table --> Queries --> QueriesA --> Analysis1 --> Analysis2
+
 # Problem Statement:
 
 The New York City Taxi & Limousine Commission (TLC) has provided a data of trips made by the taxis in the New York city. The detailed trip-level data is more than just a vast list of taxi pickup and drop off coordinates.
