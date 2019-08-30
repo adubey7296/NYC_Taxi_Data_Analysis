@@ -1,5 +1,6 @@
 # NYC_Taxi_Data_Analysis
 Problem Statement:
+
 The New York City Taxi & Limousine Commission (TLC) has provided a data of trips made by the taxis in the New York city. The detailed trip-level data is more than just a vast list of taxi pickup and drop off coordinates.
 
 The records include fields capturing pick-up and drop-off dates/times, pick-up and drop-off locations (location coordinates of the starting and ending points), trip distances, itemized fares, rate types, payment types, and driver-reported passenger counts etc.
