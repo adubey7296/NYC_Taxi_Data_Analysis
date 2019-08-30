@@ -1,0 +1,32 @@
+## Creating tables::
+
+/* -------------------- Creating table for November data------------------ */
+
+	create external table if not exists yellow_trip_data_nov_s3 (VendorID tinyint,tpep_pickup_datetime string,tpep_dropoff_datetime string,passenger_count tinyint,
+									trip_distance float,RatecodeID tinyint,store_and_fwd_flag char(1),PULocationID smallint,
+									DOLocationID smallint,payment_type float,fare_amount float,extra float,mta_tax float,
+									tip_amount float,tolls_amount float,improvement_surcharge float,total_amount float)
+	ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+	
+	tblproperties ("skip.header.line.count"="2");
+
+
+/*---------------------- Creating table for December data------------------------------*/
+	
+	create external table if not exists yellow_trip_data_dec_s3 (VendorID tinyint,------------------------,total_amount float)
+	
+	ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+
+	tblproperties ("skip.header.line.count"="2");
+
+
+/*----------------- Combining Nov and Dec data------------------------------*/ 
+
+	create table yellow_trip_data_s3 as(select * from yellow_trip_data_nov_s3  
+	UNION ALL  
+	select  * from yellow_trip_data_dec_s3);
+
+
+/*----------------- Displaying Data -----------------------------------*/ 
+	
+	select * from yellow_trip_data_s3 limit 100;

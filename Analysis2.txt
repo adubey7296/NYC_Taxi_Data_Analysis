@@ -1,0 +1,64 @@
+Q.1) What is the correlation between the number of passengers and tip paid? 
+
+ 	select round(corr(passenger_count,tip_amount),4) as correlation 
+	from yellow_trip_data_final_s3 
+	where passenger_count!=0 and tip_amount>=0;
+	
+	/*--------------------------------------------------------------------------*/ 
+	Do multiple travellers pay more compared to solo travellers?
+	
+	select passenger_count,round(avg(tip_amount),2) as average_tip_amount 
+	from yellow_trip_data_final_s3 
+	where passenger_count!=0
+	group by passenger_count
+	order by passenger_count;
+	/*--multiple travellers--*/
+	
+
+Q.2) Create five buckets of ‘tip paid’: [0-5), [5-10), [10-15) , [15-20) and >=20. 
+   Calculate the percentage share of each bucket (i.e. the fraction of trips falling in each bucket).
+   
+    /*------------------ Created five buckets of ‘tip paid’----------------------*/   
+	create table tip_amount_bucket_counts as (
+	select tip_amount,
+            case   
+            when (tip_amount >= 0  and tip_amount < 5)  then '[0-5)'
+            when (tip_amount >= 5  and tip_amount < 10) then '[5-10)'
+            when (tip_amount >= 10 and tip_amount < 15) then '[10-15)'
+            when (tip_amount >= 15 and tip_amount < 20) then '[15-20)'
+            when (tip_amount >= 20) THEN '>=20'
+            end as tip_amount_bucket
+	from yellow_trip_data_final_s3
+	where tip_amount>=0);
+	
+	/*------------------ Percentage share of each bucket-------------------------*/  
+	select tip_amount_bucket, round(count(*) * 100.0 / sum(count(*)) over(),2) as percentage_share
+	from tip_amount_bucket_counts
+	group by tip_amount_bucket ;
+	
+	
+  
+Q.3) Which month has a greater average ‘speed’ - November or December? Note that the variable ‘speed’ will have to be derived from other metrics.
+
+	select month(tpep_pickup_datetime) as month, 
+	round(avg(trip_distance/((unix_timestamp(tpep_dropoff_datetime) - unix_timestamp(tpep_pickup_datetime))/3600)),2) as average_speed
+	from yellow_trip_data_final_s3
+	where trip_distance!=0
+	group by month(tpep_pickup_datetime);
+	/*-- speed unit is in - miles/hr--*/
+	
+Q.4) Analyse the average speed of the most happening days of the year i.e. 31st December (New year’s eve) and 25th December (Christmas Eve) and 
+   compare it with the overall average.
+   
+	select day(tpep_pickup_datetime) as day_of_december, round(avg(trip_distance/((unix_timestamp(tpep_dropoff_datetime) - unix_timestamp(tpep_pickup_datetime))/3600)),2) 
+	as average_speed 
+	from yellow_trip_data_final_s3 
+	where month(tpep_pickup_datetime)=12 and day(tpep_pickup_datetime) in (25,31) and trip_distance!=0
+	group by day(tpep_pickup_datetime);
+	
+	/*-------------------- overall speed average ----------------------------*/ 	
+	select round(avg(trip_distance/((unix_timestamp(tpep_dropoff_datetime) - unix_timestamp(tpep_pickup_datetime))/3600)),2) as average_speed
+	from yellow_trip_data_final_s3
+	where trip_distance!=0;
+	
+	/*--total average speed is less compare to the 25th and 31st December--*/

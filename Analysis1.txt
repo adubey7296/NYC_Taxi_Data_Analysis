@@ -1,0 +1,32 @@
+Q.1) Compare the average fare for November and December.
+
+	select month(tpep_pickup_datetime) as month, round(avg(fare_amount),2) as average_fare from yellow_trip_data_final_s3
+	where fare_amount>0
+	group by month(tpep_pickup_datetime);
+	
+Q.2) Explore the ‘number of passengers per trip’ - how many trips are made by each level of ‘Passenger_count’? Do most people travel solo or with other people?
+
+	select passenger_count, count(*) as counts from yellow_trip_data_final_s3 
+	where passenger_count!=0
+	group by passenger_count
+	order by passenger_count;
+	
+Q.3) Which is the most preferred mode of payment?
+
+	select payment_type, count(*) as counts from yellow_trip_data_final_s3
+	group by payment_type
+	order by payment_type;
+
+Q.4) What is the average tip paid? Compare the average tip with the 25th, 50th and 75th percentiles and comment 
+   whether the ‘average tip’ is a representative statistic (of the central tendency) of ‘tip amount paid’.
+   
+	select round(avg(tip_amount),2) as average, round(percentile_approx(tip_amount, 0.25),2) as 25th_percentile, 
+	round(percentile_approx(tip_amount ,0.50),2) as 50th_percentile, round(percentile_approx(tip_amount ,0.75),2) as 75th_percentile
+	from yellow_trip_data_final_s3
+	where tip_amount>=0;
+	/*-- average_tip is higher than the 50th percentile, so it's not a representative statistic (of the central tendency) of ‘tip amount paid’--*/
+	
+Q.5) Explore the ‘Extra’ (charge) variable - what is the fraction of total trips where an extra charge is levied?
+
+ 	SELECT round(SUM( IF( extra == 0.0, 0 , 1 ) )/ COUNT(*) * 100,2) as total_trips_percentage_with_extra_charge
+	FROM yellow_trip_data_final_s3;

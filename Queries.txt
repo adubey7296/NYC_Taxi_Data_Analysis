@@ -1,0 +1,75 @@
+## Basic Data Quality Checks::
+
+/*--------------------------------------------------------------------------*/ 
+Q.1) How many records has each TPEP provider provided? Write a query that summarises the number of records of each provider.
+
+	select vendorid,count(*) as counts from yellow_trip_data_s3 group by vendorid;
+	
+Q.2) The data provided is for months November and December only. Check whether the data is consistent, and if not, identify the data quality issues. 
+   Mention all data quality issues in comments.
+   
+    ---------------------------------------------------------------------------
+	select distinct month(tpep_pickup_datetime) as month from yellow_trip_data_s3;
+	/*-- we have Jan, Feb, Mar and Oct along with Nov and Dec data, needs to filter those records --
+
+	---------------------------------------------------------------------------
+	select distinct year(tpep_pickup_datetime) as year from yellow_trip_data_s3;
+	/*-- data is present for year : 2001,2003,2008,2009,2018,2041, along with the 2017 data, neess to filter those records --
+
+	---------------------------------------------------------------------------
+	select distinct year(tpep_pickup_datetime) as year from yellow_trip_data_s3	
+	where month(tpep_pickup_datetime) in (11,12);
+	/*-- we have data for years 2008 and 2041 along with the 2007 year data, so we have to filter those records --
+
+	---------------------------------------------------------------------------
+	select distinct year(tpep_dropoff_datetime) as year from yellow_trip_data_s3	
+	where month(tpep_pickup_datetime) in (11,12) and year(tpep_pickup_datetime)=2017;
+	/*-- we have years : 2016, 2017, 2018, 2019 --
+
+	---------------------------------------------------------------------------
+	select distinct month(tpep_dropoff_datetime) as month from yellow_trip_data_s3
+	where month(tpep_pickup_datetime) in (11,12) and year(tpep_pickup_datetime)=2017 and year(tpep_dropoff_datetime) in (2017,2018);
+	/*-- dropoff months are Nov, Dec and Jab-18, that fine --
+
+	---------------------------------------------------------------------------
+	select  count(*) from yellow_trip_data_s3
+	where month(tpep_pickup_datetime) in (11,12) and year(tpep_pickup_datetime)=2017 and year(tpep_dropoff_datetime) in (2017,2018) and 
+	trip_distance=0; ---120005 records
+
+	---------------------------------------------------------------------------
+	select  count(*) from yellow_trip_data_s3
+	where month(tpep_pickup_datetime) in (11,12) and year(tpep_pickup_datetime)=2017 and year(tpep_dropoff_datetime) in (2017,2018) and 
+	passenger_count=0; --108970 records
+
+	---------------------------------------------------------------------------
+	select  distinct ratecodeid from yellow_trip_data_s3
+	where month(tpep_pickup_datetime) in (11,12) and year(tpep_pickup_datetime)=2017 and year(tpep_dropoff_datetime) in (2017,2018);
+	-- we have ratecode id value as 99 --
+
+	---------------------------------------------------------------------------
+	select  count(*) from yellow_trip_data_s3
+	where month(tpep_pickup_datetime) in (11,12) and year(tpep_pickup_datetime)=2017 and year(tpep_dropoff_datetime) in (2017,2018) and 
+	fare_amount<0; --9372 records
+
+	---------------------------------------------------------------------------
+	select  count(*) from yellow_trip_data_s3
+	where month(tpep_pickup_datetime) in (11,12) and year(tpep_pickup_datetime)=2017 and year(tpep_dropoff_datetime) in (2017,2018) and 
+	fare_amount=0; --5180 records
+
+	---------------------------------------------------------------------------
+	select  count(*) from yellow_trip_data_s3
+	where month(tpep_pickup_datetime) in (11,12) and year(tpep_pickup_datetime)=2017 and year(tpep_dropoff_datetime) in (2017,2018) and 
+	tip_amount<0; --97 records
+
+	---------------------------------------------------------------------------
+	select  count(*) from yellow_trip_data_s3
+	where month(tpep_pickup_datetime) in (11,12) and year(tpep_pickup_datetime)=2017 and year(tpep_dropoff_datetime) in (2017,2018) and 
+	total_amount<0; --9372 records
+
+	---------------------------------------------------------------------------
+	select  count(*) from yellow_trip_data_s3
+	where month(tpep_pickup_datetime) in (11,12) and year(tpep_pickup_datetime)=2017 and year(tpep_dropoff_datetime) in (2017,2018) and 
+	total_amount=0; --2122 records
+
+
+/*--------------------------------------------------------------------------*/ 	

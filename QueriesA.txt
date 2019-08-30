@@ -1,0 +1,92 @@
+Q.3) You might have encountered unusual or erroneous rows in the dataset. Can you conclude which vendor is doing a bad job in providing the records?
+
+	select vendorid, month(tpep_pickup_datetime) as month, count(*) as counts from yellow_trip_data_s3
+	group by vendorid, month(tpep_pickup_datetime)
+	order by vendorid, month;
+	/*-- vendorid=2 is providing extra/unrelevant data --*/
+
+	---------------------------------------------------------------------------
+	select vendorid, year(tpep_pickup_datetime) as year, count(*) as counts from yellow_trip_data_s3
+	group by vendorid, year(tpep_pickup_datetime)
+	order by vendorid, year;
+	/*-- vendorid=2 is providing the data for the years other that 2017 --*/
+
+	---------------------------------------------------------------------------
+	select vendorid, year(tpep_pickup_datetime) as year, count(*) as counts from yellow_trip_data_s3
+	where month(tpep_pickup_datetime) in (11,12)
+	group by vendorid, year(tpep_pickup_datetime)
+	order by vendorid, year;
+	/*-- vendorid=2 is providing the data for the years other that 2017 --*/
+
+	---------------------------------------------------------------------------
+	select vendorid, year(tpep_dropoff_datetime) as year, count(*) as counts from yellow_trip_data_s3
+	where month(tpep_pickup_datetime) in (11,12) and year(tpep_pickup_datetime)=2017
+	group by vendorid, year(tpep_dropoff_datetime)
+	order by vendorid, year;
+	/*-- vendorid=1 has provided few bad records --*/
+
+	---------------------------------------------------------------------------
+	select vendorid, month(tpep_dropoff_datetime) as month, count(*) as counts from yellow_trip_data_s3
+	where month(tpep_pickup_datetime) in (11,12) and year(tpep_pickup_datetime)=2017 and year(tpep_dropoff_datetime) in (2017,2018)
+	group by vendorid, month(tpep_dropoff_datetime)
+	order by vendorid, month;
+	/*-- we're good here doesn't seem to be any bad records --*/
+
+	---------------------------------------------------------------------------
+	select vendorid, count(*) as counts from yellow_trip_data_s3
+	where month(tpep_pickup_datetime) in (11,12) and year(tpep_pickup_datetime)=2017 and year(tpep_dropoff_datetime) in (2017,2018) and trip_distance=0
+	group by vendorid;
+	/*--vendorid=1 has provided more records with trip_distance=0 --*/
+
+	---------------------------------------------------------------------------
+	select vendorid, count(*) as counts from yellow_trip_data_s3
+	where month(tpep_pickup_datetime) in (11,12) and year(tpep_pickup_datetime)=2017 and year(tpep_dropoff_datetime) in (2017,2018) and passenger_count=0 
+	group by vendorid;
+	/*-- vendorid=1 has provided more records with passenger_count=0 --*/
+
+	---------------------------------------------------------------------------
+	select vendorid, count(*) as counts from yellow_trip_data_s3
+	where month(tpep_pickup_datetime) in (11,12) and year(tpep_pickup_datetime)=2017 and year(tpep_dropoff_datetime) in (2017,2018) and ratecodeid=99
+	group by vendorid;
+	/*-- vendorid=1 has provided more bad records with ratecodeid=99 --*/
+
+	---------------------------------------------------------------------------
+	select vendorid, count(*) as counts from yellow_trip_data_s3
+	where month(tpep_pickup_datetime) in (11,12) and year(tpep_pickup_datetime)=2017 and year(tpep_dropoff_datetime) in (2017,2018) and fare_amount<0
+	group by vendorid;
+	/*-- only vendorid=2 has provided bad records with fare_amount<0 --*/
+
+	---------------------------------------------------------------------------
+	select vendorid, count(*) as counts from yellow_trip_data_s3
+	where month(tpep_pickup_datetime) in (11,12) and year(tpep_pickup_datetime)=2017 and year(tpep_dropoff_datetime) in (2017,2018) and fare_amount=0
+	group by vendorid;
+	/*-- vendorid=1 has provided more bad records with fare_amount=0 --*/
+
+	---------------------------------------------------------------------------
+	select vendorid, count(*) as counts from yellow_trip_data_s3
+	where month(tpep_pickup_datetime) in (11,12) and year(tpep_pickup_datetime)=2017 and year(tpep_dropoff_datetime) in (2017,2018) and tip_amount<0
+	group by vendorid;
+	/*-- only vendorid=2 has provided bad records with tip_amount<0 --*/
+
+	---------------------------------------------------------------------------
+	select vendorid, count(*) as counts from yellow_trip_data_s3
+	where month(tpep_pickup_datetime) in (11,12) and year(tpep_pickup_datetime)=2017 and year(tpep_dropoff_datetime) in (2017,2018) and total_amount<0
+	group by vendorid;
+	/*-- only vendorid=2 has provided bad records with total_amount<0 --*/
+
+	---------------------------------------------------------------------------
+	select vendorid, count(*) as counts from yellow_trip_data_s3
+	where month(tpep_pickup_datetime) in (11,12) and year(tpep_pickup_datetime)=2017 and year(tpep_dropoff_datetime) in (2017,2018) and total_amount=0
+	group by vendorid;
+	/*-- vendorid=2 has provided more bad records with total_amount=0 --*/
+	
+	/* Vendorid=2 has provided the most of the bad data--
+
+	
+/*--------------------------------------------------------------------------*/ 
+## create a table after removing the unwanted or bad data (of month and year) , as we discovered in the above analysis
+
+	create table yellow_trip_data_final_s3 as (
+	select * from yellow_trip_data_s3 
+	where month(tpep_pickup_datetime) in (11,12) and year(tpep_pickup_datetime)=2017 and year(tpep_dropoff_datetime) in (2017,2018));
+
