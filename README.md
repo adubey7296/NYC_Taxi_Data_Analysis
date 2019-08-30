@@ -7,16 +7,6 @@ The records include fields capturing pick-up and drop-off dates/times, pick-up a
 
 By aggregating the aforementioned records this dataset was created that provides precise location coordinates for where the trip started and ended, timestamps for when the trip started and ended, plus a few other variables including fare amount, payment method, and distance travelled.
 
-# Data Loading:
-
-Connected to the Master node via SSH (using PuTTY and PUTTYGen)
-
-Dowloaded the data file [command: sudo wget ]
-
-Unzipped the file [command: sudo gzip -d filename]
-
-Uploaded the data to S3 via command line [command: aws s3 cp filename s3://bucketname/]
-
 # Link to downlaod the dataset:
 
 https://s3.amazonaws.com/nyc-tlc/trip+data/yellow_tripdata_2017-11.csv
