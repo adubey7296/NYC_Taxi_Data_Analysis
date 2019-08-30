@@ -1,5 +1,5 @@
 # NYC_Taxi_Data_Analysis
-Problem Statement:
+# Problem Statement:
 
 The New York City Taxi & Limousine Commission (TLC) has provided a data of trips made by the taxis in the New York city. The detailed trip-level data is more than just a vast list of taxi pickup and drop off coordinates.
 
@@ -7,7 +7,8 @@ The records include fields capturing pick-up and drop-off dates/times, pick-up a
 
 By aggregating the aforementioned records this dataset was created that provides precise location coordinates for where the trip started and ended, timestamps for when the trip started and ended, plus a few other variables including fare amount, payment method, and distance travelled.
 
-Data Loading:
+# Data Loading:
+______________________________________________________________________________________________________________________________________
 Connected to the Master node via SSH (using PuTTY and PUTTYGen)
 Dowloaded the data file [command: sudo wget ]
 Unzipped the file [command: sudo gzip -d filename]
