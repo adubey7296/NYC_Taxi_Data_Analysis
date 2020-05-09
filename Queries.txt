@@ -14,7 +14,7 @@ Q.2) The data provided is for months November and December only. Check whether t
 
 	---------------------------------------------------------------------------
 	select distinct year(tpep_pickup_datetime) as year from yellow_trip_data_s3;
-	/*-- data is present for year : 2001,2003,2008,2009,2018,2041, along with the 2017 data, neess to filter those records --
+	/*-- data is present for year : 2001,2003,2008,2009,2018,2014, along with the 2017 data, needs to filter those records --
 
 	---------------------------------------------------------------------------
 	select distinct year(tpep_pickup_datetime) as year from yellow_trip_data_s3	
